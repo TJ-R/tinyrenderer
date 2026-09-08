@@ -24,31 +24,19 @@ int main(int argc, char **argv) {
         framebuffer.set(bx, by, white);
         framebuffer.set(cx, cy, white);
 
-        std::cout << "Green\n";
-        drawLine(&framebuffer, ax, ay, bx, by, green);
-        std::cout << "Blue\n";
-        drawLine(&framebuffer, ax, ay, cx, cy, blue);
-        std::cout << "Red\n";
-        drawLine(&framebuffer, bx, by, cx, cy, red);
-
+        drawLine(&framebuffer, ax, ay, bx, by, blue);
+        drawLine(&framebuffer, cx, cy, bx, by, green);
+        drawLine(&framebuffer, cx, cy, ax, ay, yellow);
+        drawLine(&framebuffer, ax, ay, cx, cy, red);
         framebuffer.write_tga_file("framebuffer.tga");
         return 0;
 }
 
 void drawLine(TGAImage *frameBuffer, int ax, int ay, int bx, int by,
               const TGAColor &c) {
-        for (int t = 1; t <= 100; t++) {
-                // This is rounding without cmath usage
-                float res = t / 100.f;
-                int subRes = bx - ax;
-                std::cout << "ax " << ax << "\n"
-                          << "bx " << bx << "\n"
-                          << "t / 100 = " << res << "\n"
-                          << "bx - ax = " << subRes << "\n";
-
-                int x = ax + (t / 100.f) * (bx - ax);
-                int y = ay + (t / 100.f) * (by - ay);
-                std::cout << "X: " << x << " Y: " << y << "\n";
+        for (float t = 0.; t <= 1.; t += 0.1) {
+                int x = std::round(ax + (t * (bx - ax)));
+                int y = std::round(ay + (t * (by - ay)));
                 frameBuffer->set(x, y, c);
         }
 }
