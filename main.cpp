@@ -34,9 +34,41 @@ int main(int argc, char **argv) {
 
 void drawLine(TGAImage *frameBuffer, int ax, int ay, int bx, int by,
               const TGAColor &c) {
-        for (float t = 0.; t <= 1.; t += 0.1) {
-                int x = std::round(ax + (t * (bx - ax)));
-                int y = std::round(ay + (t * (by - ay)));
-                frameBuffer->set(x, y, c);
+        if ((bx > ax && ((bx - ax) >= (by - ay))) ||
+            (ax > bx && ((ax - bx) >= (ay - by)))) {
+                for (int x = ax; x <= bx; x++) {
+                        // Sampling based on x positioning
+                        // t is calced by the division of the a "normalization"
+                        // of of the line starting it a 1 in first iteration of
+                        // loop and the amount of samples we need 3rd iter for
+                        // red would be (10 - 7) / (62 - 7) => 3 / 55 interval
+                        // of t will be 0 -> 1
+                        float t = (x - ax) / static_cast<float>(bx - ax);
+                        int y = std::round(ay + (t * (by - ay)));
+
+                        std::cout << x << "\n";
+                        std::cout << y << "\n";
+                        std::cout << t << "\n";
+                        frameBuffer->set(x, y, c);
+                }
+        } else {
+                if (ay > by) {
+                        int t = bx;
+                        bx = ax;
+                        ax = t;
+
+                        t = by;
+                        by = ay;
+                        ay = t;
+                }
+
+                for (int y = ay; y <= by; y++) {
+                        float t = (y - ay) / static_cast<float>(by - ay);
+                        int x = std::round(ax + (t * (bx - ax)));
+                        std::cout << x << "\n";
+                        std::cout << y << "\n";
+                        std::cout << t << "\n";
+                        frameBuffer->set(x, y, c);
+                }
         }
 }
