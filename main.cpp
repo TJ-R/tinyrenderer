@@ -1,5 +1,6 @@
 #include "tgaimage.h"
 #include <cmath>
+#include <compare>
 #include <iostream>
 
 constexpr TGAColor white = {255, 255, 255, 255}; // attention, BGRA order
@@ -34,8 +35,32 @@ int main(int argc, char **argv) {
 
 void drawLine(TGAImage *frameBuffer, int ax, int ay, int bx, int by,
               const TGAColor &c) {
-        if ((bx > ax && ((bx - ax) >= (by - ay))) ||
-            (ax > bx && ((ax - bx) >= (ay - by)))) {
+
+        int xGap, yGap;
+
+        if (ax < bx) {
+                xGap = bx - ax;
+        } else {
+                xGap = ax - bx;
+        }
+
+        if (ay < by) {
+                yGap = by - ay;
+        } else {
+                yGap = ay - by;
+        }
+
+        if (xGap > yGap) {
+                if (ax > bx) {
+                        int t = bx;
+                        bx = ax;
+                        ax = t;
+
+                        t = by;
+                        by = ay;
+                        ay = t;
+                }
+
                 for (int x = ax; x <= bx; x++) {
                         // Sampling based on x positioning
                         // t is calced by the division of the a "normalization"
@@ -45,10 +70,6 @@ void drawLine(TGAImage *frameBuffer, int ax, int ay, int bx, int by,
                         // of t will be 0 -> 1
                         float t = (x - ax) / static_cast<float>(bx - ax);
                         int y = std::round(ay + (t * (by - ay)));
-
-                        std::cout << x << "\n";
-                        std::cout << y << "\n";
-                        std::cout << t << "\n";
                         frameBuffer->set(x, y, c);
                 }
         } else {
@@ -65,9 +86,6 @@ void drawLine(TGAImage *frameBuffer, int ax, int ay, int bx, int by,
                 for (int y = ay; y <= by; y++) {
                         float t = (y - ay) / static_cast<float>(by - ay);
                         int x = std::round(ax + (t * (bx - ax)));
-                        std::cout << x << "\n";
-                        std::cout << y << "\n";
-                        std::cout << t << "\n";
                         frameBuffer->set(x, y, c);
                 }
         }
