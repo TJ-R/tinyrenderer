@@ -1,6 +1,6 @@
 #include "tgaimage.h"
 #include <cmath>
-#include <compare>
+#include <fstream>
 #include <iostream>
 
 constexpr TGAColor white = {255, 255, 255, 255}; // attention, BGRA order
@@ -12,24 +12,32 @@ constexpr TGAColor yellow = {0, 200, 255, 255};
 void drawLine(TGAImage *frameBuffer, int ax, int ay, int bx, int by,
               const TGAColor &c);
 
+int drawObjFile(const char *fileName);
+
 int main(int argc, char **argv) {
         constexpr int width = 64;
         constexpr int height = 64;
         TGAImage framebuffer(width, height, TGAImage::RGB);
 
-        int ax = 7, ay = 3;
-        int bx = 12, by = 37;
-        int cx = 62, cy = 53;
+        // int ax = 7, ay = 3;
+        // int bx = 12, by = 37;
+        // int cx = 62, cy = 53;
+        //
+        // framebuffer.set(ax, ay, white);
+        // framebuffer.set(bx, by, white);
+        // framebuffer.set(cx, cy, white);
 
-        framebuffer.set(ax, ay, white);
-        framebuffer.set(bx, by, white);
-        framebuffer.set(cx, cy, white);
+        // drawLine(&framebuffer, ax, ay, bx, by, blue);
+        // drawLine(&framebuffer, cx, cy, bx, by, green);
+        // drawLine(&framebuffer, cx, cy, ax, ay, yellow);
+        // drawLine(&framebuffer, ax, ay, cx, cy, red);
+        // framebuffer.write_tga_file("framebuffer.tga");
+        //
 
-        drawLine(&framebuffer, ax, ay, bx, by, blue);
-        drawLine(&framebuffer, cx, cy, bx, by, green);
-        drawLine(&framebuffer, cx, cy, ax, ay, yellow);
-        drawLine(&framebuffer, ax, ay, cx, cy, red);
-        framebuffer.write_tga_file("framebuffer.tga");
+        int res = drawObjFile("./obj/diablo3_pose/diablo3_pose.obj");
+        if (res != 0) {
+                return 0;
+        }
         return 0;
 }
 
@@ -65,4 +73,20 @@ void drawLine(TGAImage *frameBuffer, int ax, int ay, int bx, int by,
                         frameBuffer->set(x, y, c);
                 }
         }
+}
+
+int drawObjFile(const char *fileName) {
+        std::ifstream inf{fileName};
+
+        if (!inf) {
+                std::cout << "Failed to open file" << "\n";
+                return 1;
+        }
+
+        std::string strInput;
+        while (inf >> strInput) {
+                std::cout << strInput << "\n";
+        }
+
+        return 0;
 }
