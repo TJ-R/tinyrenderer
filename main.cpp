@@ -36,46 +36,32 @@ int main(int argc, char **argv) {
 void drawLine(TGAImage *frameBuffer, int ax, int ay, int bx, int by,
               const TGAColor &c) {
 
-        int xGap, yGap;
+        bool steep = std::abs(ax - bx) < std::abs(ay - by);
 
-        if (ax < bx) {
-                xGap = bx - ax;
-        } else {
-                xGap = ax - bx;
+        // transpose if true
+        if (steep) {
+                std::swap(ax, ay);
+                std::swap(bx, by);
         }
 
-        if (ay < by) {
-                yGap = by - ay;
-        } else {
-                yGap = ay - by;
+        if (ax > bx) {
+                std::swap(ax, bx);
+                std::swap(ay, by);
         }
-
-        if (xGap > yGap) {
-                if (ax > bx) {
-                        std::swap(ax, bx);
-                        std::swap(ay, by);
-                }
-
-                for (int x = ax; x <= bx; x++) {
-                        // Sampling based on x positioning
-                        // t is calced by the division of the a "normalization"
-                        // of of the line starting it a 1 in first iteration of
-                        // loop and the amount of samples we need 3rd iter for
-                        // red would be (10 - 7) / (62 - 7) => 3 / 55 interval
-                        // of t will be 0 -> 1
-                        float t = (x - ax) / static_cast<float>(bx - ax);
-                        int y = std::round(ay + (t * (by - ay)));
-                        frameBuffer->set(x, y, c);
-                }
-        } else {
-                if (ay > by) {
-                        std::swap(ax, bx);
-                        std::swap(ay, by);
-                }
-
-                for (int y = ay; y <= by; y++) {
-                        float t = (y - ay) / static_cast<float>(by - ay);
-                        int x = std::round(ax + (t * (bx - ax)));
+        for (int x = ax; x <= bx; x++) {
+                // Sampling based on x positioning
+                // t is calced by the division of the a "normalization"
+                // of of the line starting it a 1 in first iteration of
+                // loop and the amount of samples we need 3rd iter for
+                // red would be (10 - 7) / (62 - 7) => 3 / 55 interval
+                // of t will be 0 -> 1
+                float t = (x - ax) / static_cast<float>(bx - ax);
+                int y = std::round(ay + (t * (by - ay)));
+                if (steep) {
+                        // flipped the x and y back when drawing
+                        // since it is currently transposed
+                        frameBuffer->set(y, x, c);
+                } else {
                         frameBuffer->set(x, y, c);
                 }
         }
