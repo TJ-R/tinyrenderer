@@ -52,13 +52,8 @@ void drawLine(TGAImage *frameBuffer, int ax, int ay, int bx, int by,
 
         if (xGap > yGap) {
                 if (ax > bx) {
-                        int t = bx;
-                        bx = ax;
-                        ax = t;
-
-                        t = by;
-                        by = ay;
-                        ay = t;
+                        std::swap(ax, bx);
+                        std::swap(ay, by);
                 }
 
                 for (int x = ax; x <= bx; x++) {
@@ -74,13 +69,8 @@ void drawLine(TGAImage *frameBuffer, int ax, int ay, int bx, int by,
                 }
         } else {
                 if (ay > by) {
-                        int t = bx;
-                        bx = ax;
-                        ax = t;
-
-                        t = by;
-                        by = ay;
-                        ay = t;
+                        std::swap(ax, bx);
+                        std::swap(ay, by);
                 }
 
                 for (int y = ay; y <= by; y++) {
