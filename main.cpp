@@ -2,6 +2,7 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <strings.h>
 
 constexpr TGAColor white = {255, 255, 255, 255}; // attention, BGRA order
 constexpr TGAColor green = {0, 255, 0, 255};
@@ -13,6 +14,12 @@ void drawLine(TGAImage *frameBuffer, int ax, int ay, int bx, int by,
               const TGAColor &c);
 
 int drawObjFile(const char *fileName);
+
+struct Vertex {
+        float x;
+        float y;
+        float z;
+};
 
 int main(int argc, char **argv) {
         constexpr int width = 64;
@@ -75,6 +82,24 @@ void drawLine(TGAImage *frameBuffer, int ax, int ay, int bx, int by,
         }
 }
 
+std::vector<std::string> split(const std::string &str,
+                               const std::string &delimiter) {
+
+        // Currently failing with blank output
+        std::vector<std::string> tokens;
+        size_t pos = 0;
+        size_t nextPos;
+
+        while ((nextPos = str.find(delimiter, pos)) != std::string::npos) {
+                std::string token = str.substr(pos, nextPos - pos);
+
+                std::cout << token << "\n";
+                pos = nextPos;
+        }
+
+        return tokens;
+}
+
 int drawObjFile(const char *fileName) {
         std::ifstream inf{fileName};
 
@@ -83,9 +108,13 @@ int drawObjFile(const char *fileName) {
                 return 1;
         }
 
+        std::vector<Vertex> verticies;
         std::string strInput;
-        while (inf >> strInput) {
-                std::cout << strInput << "\n";
+        while (std::getline(inf, strInput)) {
+                if (strInput[0] == 'v') {
+                        split(strInput, " ");
+                } else if (strInput[0] == 'f') {
+                }
         }
 
         return 0;
