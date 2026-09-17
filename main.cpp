@@ -22,8 +22,8 @@ struct Vertex {
 };
 
 int main(int argc, char **argv) {
-        constexpr int width = 64;
-        constexpr int height = 64;
+        constexpr int width = 1280;
+        constexpr int height = 720;
         TGAImage framebuffer(width, height, TGAImage::RGB);
 
         // int ax = 7, ay = 3;
@@ -105,14 +105,10 @@ std::vector<std::string> split(const std::string &str,
                 }
         }
 
-        for (auto token : tokens) {
-                std::cout << token << "\n";
-        }
-        std::cout << "------------------------------\n";
         return tokens;
 }
 
-int drawObjFile(const char *fileName) {
+int drawObjFile(const char *fileName, const int width, const int height) {
         std::ifstream inf{fileName};
 
         if (!inf) {
@@ -125,6 +121,11 @@ int drawObjFile(const char *fileName) {
         while (std::getline(inf, strInput)) {
                 if (strInput[0] == 'v' && strInput[1] == ' ') {
                         std::vector<std::string> tokens = split(strInput, " ");
+                        Vertex vertex;
+                        vertex.x = std::stof(tokens[1]);
+                        vertex.y = std::stof(tokens[2]);
+                        vertex.z = std::stof(tokens[3]);
+                        verticies.push_back(vertex);
 
                 } else if (strInput[0] == 'f') {
                 }
