@@ -13,7 +13,8 @@ constexpr TGAColor yellow = {0, 200, 255, 255};
 void drawLine(TGAImage *frameBuffer, int ax, int ay, int bx, int by,
               const TGAColor &c);
 
-int drawObjFile(const char *fileName);
+int drawObjFile(const char *fileName, const float width, const float height,
+                TGAImage *frameBuffer);
 
 struct Vertex {
         float x;
@@ -22,8 +23,8 @@ struct Vertex {
 };
 
 int main(int argc, char **argv) {
-        constexpr int width = 1280;
-        constexpr int height = 720;
+        constexpr int width = 640;
+        constexpr int height = 640;
         TGAImage framebuffer(width, height, TGAImage::RGB);
 
         // int ax = 7, ay = 3;
@@ -38,10 +39,13 @@ int main(int argc, char **argv) {
         // drawLine(&framebuffer, cx, cy, bx, by, green);
         // drawLine(&framebuffer, cx, cy, ax, ay, yellow);
         // drawLine(&framebuffer, ax, ay, cx, cy, red);
-        // framebuffer.write_tga_file("framebuffer.tga");
-        //
 
-        int res = drawObjFile("./obj/diablo3_pose/diablo3_pose.obj");
+        int res = drawObjFile("./obj/diablo3_pose/diablo3_pose.obj",
+                              static_cast<float>(width),
+                              static_cast<float>(height), &framebuffer);
+
+        framebuffer.write_tga_file("framebuffer.tga");
+
         if (res != 0) {
                 return 0;
         }
@@ -108,7 +112,8 @@ std::vector<std::string> split(const std::string &str,
         return tokens;
 }
 
-int drawObjFile(const char *fileName, const int width, const int height) {
+int drawObjFile(const char *fileName, const float width, const float height,
+                TGAImage *frameBuffer) {
         std::ifstream inf{fileName};
 
         if (!inf) {
@@ -122,12 +127,46 @@ int drawObjFile(const char *fileName, const int width, const int height) {
                 if (strInput[0] == 'v' && strInput[1] == ' ') {
                         std::vector<std::string> tokens = split(strInput, " ");
                         Vertex vertex;
-                        vertex.x = std::stof(tokens[1]);
-                        vertex.y = std::stof(tokens[2]);
-                        vertex.z = std::stof(tokens[3]);
+                        // Transform -1 to 1 space to 0 to 2
+                        vertex.x = std::stof(tokens[1]) + 1;
+                        vertex.y = std::stof(tokens[2]) + 1;
+                        vertex.z = std::stof(tokens[3]) + 1;
                         verticies.push_back(vertex);
+                } else if (strInput[0] == 'f' && strInput[1] == ' ') {
+                        std::vector faceStrs = split(strInput, " ");
 
-                } else if (strInput[0] == 'f') {
+                        size_t pos;
+                        size_t nextPos;
+
+                        pos = 0;
+                        nextPos = faceStrs[1].find("/", pos);
+                        int vIdx1 =
+                            std::stoi(faceStrs[1].substr(pos, nextPos)) - 1;
+                        int v1x = std::round(verticies[vIdx1].x * (width / 2));
+                        int v1y = std::round(verticies[vIdx1].y * (height / 2));
+
+                        pos = 0;
+                        nextPos = faceStrs[2].find("/", pos);
+                        int vIdx2 =
+                            std::stoi(faceStrs[2].substr(pos, nextPos)) - 1;
+
+                        int v2x = std::round(verticies[vIdx2].x * (width / 2));
+                        int v2y = std::round(verticies[vIdx2].y * (height / 2));
+
+                        pos = 0;
+                        nextPos = faceStrs[3].find("/", pos);
+                        int vIdx3 =
+                            std::stoi(faceStrs[3].substr(pos, nextPos)) - 1;
+
+                        int v3x = std::round(verticies[vIdx3].x * (width / 2));
+                        int v3y = std::round(verticies[vIdx3].y * (height / 2));
+
+                        drawLine(frameBuffer, v1x, v1y, v2x, v2y, red);
+                        drawLine(frameBuffer, v2x, v2y, v3x, v3y, red);
+                        drawLine(frameBuffer, v3x, v3y, v1x, v1y, red);
+                        frameBuffer->set(v1x, v1y, white);
+                        frameBuffer->set(v2x, v2y, white);
+                        frameBuffer->set(v3x, v3y, white);
                 }
         }
 
