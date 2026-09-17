@@ -90,13 +90,25 @@ std::vector<std::string> split(const std::string &str,
         size_t pos = 0;
         size_t nextPos;
 
-        while ((nextPos = str.find(delimiter, pos)) != std::string::npos) {
-                std::string token = str.substr(pos, nextPos - pos);
+        while (true) {
+                nextPos = str.find(delimiter, pos);
 
-                std::cout << token << "\n";
-                pos = nextPos;
+                if (nextPos == std::string::npos) {
+                        nextPos = str.size() - 1;
+                        std::string token = str.substr(pos, nextPos - pos);
+                        tokens.push_back(token);
+                        break;
+                } else {
+                        std::string token = str.substr(pos, nextPos - pos);
+                        pos = nextPos + 1;
+                        tokens.push_back(token);
+                }
         }
 
+        for (auto token : tokens) {
+                std::cout << token << "\n";
+        }
+        std::cout << "------------------------------\n";
         return tokens;
 }
 
@@ -111,8 +123,9 @@ int drawObjFile(const char *fileName) {
         std::vector<Vertex> verticies;
         std::string strInput;
         while (std::getline(inf, strInput)) {
-                if (strInput[0] == 'v') {
-                        split(strInput, " ");
+                if (strInput[0] == 'v' && strInput[1] == ' ') {
+                        std::vector<std::string> tokens = split(strInput, " ");
+
                 } else if (strInput[0] == 'f') {
                 }
         }
