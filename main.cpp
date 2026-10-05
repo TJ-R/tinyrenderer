@@ -1,26 +1,15 @@
 #include "tgaimage.h"
+#include "triangle.cpp"
+#include "types.h"
+#include "utils/draw_utils.h"
+#include "utils/string_utils.h"
 #include <cmath>
 #include <fstream>
 #include <iostream>
 #include <strings.h>
 
-constexpr TGAColor white = {255, 255, 255, 255}; // attention, BGRA order
-constexpr TGAColor green = {0, 255, 0, 255};
-constexpr TGAColor red = {0, 0, 255, 255};
-constexpr TGAColor blue = {255, 128, 64, 255};
-constexpr TGAColor yellow = {0, 200, 255, 255};
-
-void drawLine(TGAImage *frameBuffer, int ax, int ay, int bx, int by,
-              const TGAColor &c);
-
 int drawObjFile(const char *fileName, const float width, const float height,
                 TGAImage *frameBuffer);
-
-struct Vertex {
-        float x;
-        float y;
-        float z;
-};
 
 int main(int argc, char **argv) {
         constexpr int width = 640;
@@ -44,72 +33,25 @@ int main(int argc, char **argv) {
                               static_cast<float>(width),
                               static_cast<float>(height), &framebuffer);
 
+        // std::ifstream inf{"./obj/diablo3_pose/diablo3_pose.obj"};
+        // std::string strInput;
+        // for (int i = 0; i < 10; ++i) {
+        //         std::getline(inf, strInput);
+        //         std::cout << "Num of bytes in line " << i << " is "
+        //                   << strInput.size() << " bytes\n";
+        // }
+        // types::vec3f p1 = {7.0, 3.0, 0.0};
+        // types::vec3f p2 = {12.0, 37.0, 0.0};
+        // types::vec3f p3 = {62.0, 53.0, 0.0};
+        // Triangle triangle = {p1, p2, p3};
+        // triangle.draw(&framebuffer, tgaColors::blue);
+
         framebuffer.write_tga_file("framebuffer.tga");
 
         if (res != 0) {
-                return 0;
+                return res;
         }
         return 0;
-}
-
-void drawLine(TGAImage *frameBuffer, int ax, int ay, int bx, int by,
-              const TGAColor &c) {
-
-        bool steep = std::abs(ax - bx) < std::abs(ay - by);
-
-        // transpose if true
-        if (steep) {
-                std::swap(ax, ay);
-                std::swap(bx, by);
-        }
-
-        if (ax > bx) {
-                std::swap(ax, bx);
-                std::swap(ay, by);
-        }
-        for (int x = ax; x <= bx; x++) {
-                // Sampling based on x positioning
-                // t is calced by the division of the a "normalization"
-                // of of the line starting it a 1 in first iteration of
-                // loop and the amount of samples we need 3rd iter for
-                // red would be (10 - 7) / (62 - 7) => 3 / 55 interval
-                // of t will be 0 -> 1
-                float t = (x - ax) / static_cast<float>(bx - ax);
-                int y = std::round(ay + (t * (by - ay)));
-                if (steep) {
-                        // flipped the x and y back when drawing
-                        // since it is currently transposed
-                        frameBuffer->set(y, x, c);
-                } else {
-                        frameBuffer->set(x, y, c);
-                }
-        }
-}
-
-std::vector<std::string> split(const std::string &str,
-                               const std::string &delimiter) {
-
-        // Currently failing with blank output
-        std::vector<std::string> tokens;
-        size_t pos = 0;
-        size_t nextPos;
-
-        while (true) {
-                nextPos = str.find(delimiter, pos);
-
-                if (nextPos == std::string::npos) {
-                        nextPos = str.size() - 1;
-                        std::string token = str.substr(pos, nextPos - pos);
-                        tokens.push_back(token);
-                        break;
-                } else {
-                        std::string token = str.substr(pos, nextPos - pos);
-                        pos = nextPos + 1;
-                        tokens.push_back(token);
-                }
-        }
-
-        return tokens;
 }
 
 int drawObjFile(const char *fileName, const float width, const float height,
@@ -121,19 +63,21 @@ int drawObjFile(const char *fileName, const float width, const float height,
                 return 1;
         }
 
-        std::vector<Vertex> verticies;
+        std::vector<types::vec3f> verticies;
         std::string strInput;
         while (std::getline(inf, strInput)) {
                 if (strInput[0] == 'v' && strInput[1] == ' ') {
-                        std::vector<std::string> tokens = split(strInput, " ");
-                        Vertex vertex;
+                        std::vector<std::string> tokens =
+                            StringUtils::split(strInput, " ");
+                        types::vec3f vertex;
                         // Transform -1 to 1 space to 0 to 2
                         vertex.x = std::stof(tokens[1]) + 1;
                         vertex.y = std::stof(tokens[2]) + 1;
                         vertex.z = std::stof(tokens[3]) + 1;
                         verticies.push_back(vertex);
                 } else if (strInput[0] == 'f' && strInput[1] == ' ') {
-                        std::vector faceStrs = split(strInput, " ");
+                        std::vector faceStrs =
+                            StringUtils::split(strInput, " ");
 
                         size_t pos;
                         size_t nextPos;
@@ -161,12 +105,19 @@ int drawObjFile(const char *fileName, const float width, const float height,
                         int v3x = std::round(verticies[vIdx3].x * (width / 2));
                         int v3y = std::round(verticies[vIdx3].y * (height / 2));
 
-                        drawLine(frameBuffer, v1x, v1y, v2x, v2y, red);
-                        drawLine(frameBuffer, v2x, v2y, v3x, v3y, red);
-                        drawLine(frameBuffer, v3x, v3y, v1x, v1y, red);
-                        frameBuffer->set(v1x, v1y, white);
-                        frameBuffer->set(v2x, v2y, white);
-                        frameBuffer->set(v3x, v3y, white);
+                        DrawUtils::drawLinei(
+                            frameBuffer, types::vec3i{v1x, v1y},
+                            types::vec3i{v2x, v2y}, tgaColors::red);
+                        DrawUtils::drawLinei(
+                            frameBuffer, types::vec3i{v2x, v2y},
+                            types::vec3i{v3x, v3y}, tgaColors::red);
+                        DrawUtils::drawLinei(
+                            frameBuffer, types::vec3i{v3x, v3y},
+                            types::vec3i{v1x, v1y}, tgaColors::red);
+
+                        frameBuffer->set(v1x, v1y, tgaColors::white);
+                        frameBuffer->set(v2x, v2y, tgaColors::white);
+                        frameBuffer->set(v3x, v3y, tgaColors::white);
                 }
         }
 
