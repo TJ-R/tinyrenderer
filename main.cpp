@@ -29,9 +29,9 @@ int main(int argc, char **argv) {
         // drawLine(&framebuffer, cx, cy, ax, ay, yellow);
         // drawLine(&framebuffer, ax, ay, cx, cy, red);
 
-        // int res = drawObjFile("./obj/diablo3_pose/diablo3_pose.obj",
-        //                       static_cast<float>(width),
-        //                       static_cast<float>(height), &framebuffer);
+        int res = drawObjFile("./obj/diablo3_pose/diablo3_pose.obj",
+                              static_cast<float>(width),
+                              static_cast<float>(height), &framebuffer);
 
         // std::ifstream inf{"./obj/diablo3_pose/diablo3_pose.obj"};
         // std::string strInput;
@@ -46,15 +46,15 @@ int main(int argc, char **argv) {
         // Triangle triangle = {p1, p2, p3};
         // triangle.draw(&framebuffer, tgaColors::blue);
         //
-        types::vec3i p1 = {7, 3, 0};
-        types::vec3i p2 = {12, 37, 0};
-        types::vec3i p3 = {62, 53, 0};
-        DrawUtils::drawTriangle(&framebuffer, p1, p2, p3);
+        // types::vec3i p1 = {7, 3, 0};
+        // types::vec3i p2 = {12, 37, 0};
+        // types::vec3i p3 = {62, 53, 0};
+        // DrawUtils::drawTriangle(&framebuffer, p1, p2, p3);
         framebuffer.write_tga_file("framebuffer.tga");
 
-        // if (res != 0) {
-        //         return res;
-        // }
+        if (res != 0) {
+                return res;
+        }
         return 0;
 }
 
@@ -65,6 +65,8 @@ int drawObjFile(const char *fileName, const float width, const float height,
         if (!inf) {
                 std::cout << "Failed to open file" << "\n";
                 return 1;
+        } else {
+                std::cout << "Starting drawing for " << fileName << "\n";
         }
 
         std::vector<types::vec3f> verticies;
@@ -109,15 +111,19 @@ int drawObjFile(const char *fileName, const float width, const float height,
                         int v3x = std::round(verticies[vIdx3].x * (width / 2));
                         int v3y = std::round(verticies[vIdx3].y * (height / 2));
 
-                        DrawUtils::drawLinei(
+                        // DrawUtils::drawLinei(
+                        //     frameBuffer, types::vec3i{v1x, v1y},
+                        //     types::vec3i{v2x, v2y}, tgaColors::red);
+                        // DrawUtils::drawLinei(
+                        //     frameBuffer, types::vec3i{v2x, v2y},
+                        //     types::vec3i{v3x, v3y}, tgaColors::red);
+                        // DrawUtils::drawLinei(
+                        //     frameBuffer, types::vec3i{v3x, v3y},
+                        //     types::vec3i{v1x, v1y}, tgaColors::red);
+
+                        DrawUtils::drawTriangle(
                             frameBuffer, types::vec3i{v1x, v1y},
-                            types::vec3i{v2x, v2y}, tgaColors::red);
-                        DrawUtils::drawLinei(
-                            frameBuffer, types::vec3i{v2x, v2y},
-                            types::vec3i{v3x, v3y}, tgaColors::red);
-                        DrawUtils::drawLinei(
-                            frameBuffer, types::vec3i{v3x, v3y},
-                            types::vec3i{v1x, v1y}, tgaColors::red);
+                            types::vec3i{v2x, v2y}, types::vec3i{v3x, v3y});
 
                         frameBuffer->set(v1x, v1y, tgaColors::white);
                         frameBuffer->set(v2x, v2y, tgaColors::white);
