@@ -1,7 +1,5 @@
 #include "string_utils.h"
 
-namespace StringUtils {
-
 std::vector<std::string> split(const std::string &str,
                                const std::string &delimiter) {
         // Currently failing with blank output
@@ -26,5 +24,3 @@ std::vector<std::string> split(const std::string &str,
 
         return tokens;
 }
-
-} // namespace StringUtils

@@ -1,7 +1,5 @@
 #pragma once
 
-namespace types {
-
 struct vec2f {
         float x;
         float y;
@@ -18,5 +16,3 @@ struct vec3i {
         int y;
         int z;
 };
-
-}; // namespace types

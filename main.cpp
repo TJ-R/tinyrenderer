@@ -40,15 +40,15 @@ int main(int argc, char **argv) {
         //         std::cout << "Num of bytes in line " << i << " is "
         //                   << strInput.size() << " bytes\n";
         // }
-        // types::vec3f p1 = {7.0, 3.0, 0.0};
-        // types::vec3f p2 = {12.0, 37.0, 0.0};
-        // types::vec3f p3 = {62.0, 53.0, 0.0};
+        // vec3f p1 = {7.0, 3.0, 0.0};
+        // vec3f p2 = {12.0, 37.0, 0.0};
+        // vec3f p3 = {62.0, 53.0, 0.0};
         // Triangle triangle = {p1, p2, p3};
         // triangle.draw(&framebuffer, tgaColors::blue);
         //
-        // types::vec3i p1 = {7, 3, 0};
-        // types::vec3i p2 = {12, 37, 0};
-        // types::vec3i p3 = {62, 53, 0};
+        // vec3i p1 = {7, 3, 0};
+        // vec3i p2 = {12, 37, 0};
+        // vec3i p3 = {62, 53, 0};
         // DrawUtils::drawTriangle(&framebuffer, p1, p2, p3);
         framebuffer.write_tga_file("framebuffer.tga");
 
@@ -69,21 +69,19 @@ int drawObjFile(const char *fileName, const float width, const float height,
                 std::cout << "Starting drawing for " << fileName << "\n";
         }
 
-        std::vector<types::vec3f> verticies;
+        std::vector<vec3f> verticies;
         std::string strInput;
         while (std::getline(inf, strInput)) {
                 if (strInput[0] == 'v' && strInput[1] == ' ') {
-                        std::vector<std::string> tokens =
-                            StringUtils::split(strInput, " ");
-                        types::vec3f vertex;
+                        std::vector<std::string> tokens = split(strInput, " ");
+                        vec3f vertex;
                         // Transform -1 to 1 space to 0 to 2
                         vertex.x = std::stof(tokens[1]) + 1;
                         vertex.y = std::stof(tokens[2]) + 1;
                         vertex.z = std::stof(tokens[3]) + 1;
                         verticies.push_back(vertex);
                 } else if (strInput[0] == 'f' && strInput[1] == ' ') {
-                        std::vector faceStrs =
-                            StringUtils::split(strInput, " ");
+                        std::vector faceStrs = split(strInput, " ");
 
                         size_t pos;
                         size_t nextPos;
@@ -112,18 +110,17 @@ int drawObjFile(const char *fileName, const float width, const float height,
                         int v3y = std::round(verticies[vIdx3].y * (height / 2));
 
                         // DrawUtils::drawLinei(
-                        //     frameBuffer, types::vec3i{v1x, v1y},
-                        //     types::vec3i{v2x, v2y}, tgaColors::red);
+                        //     frameBuffer, vec3i{v1x, v1y},
+                        //     vec3i{v2x, v2y}, tgaColors::red);
                         // DrawUtils::drawLinei(
-                        //     frameBuffer, types::vec3i{v2x, v2y},
-                        //     types::vec3i{v3x, v3y}, tgaColors::red);
+                        //     frameBuffer, vec3i{v2x, v2y},
+                        //     vec3i{v3x, v3y}, tgaColors::red);
                         // DrawUtils::drawLinei(
-                        //     frameBuffer, types::vec3i{v3x, v3y},
-                        //     types::vec3i{v1x, v1y}, tgaColors::red);
+                        //     frameBuffer, vec3i{v3x, v3y},
+                        //     vec3i{v1x, v1y}, tgaColors::red);
 
-                        DrawUtils::drawTriangle(
-                            frameBuffer, types::vec3i{v1x, v1y},
-                            types::vec3i{v2x, v2y}, types::vec3i{v3x, v3y});
+                        drawTriangle(frameBuffer, vec3i{v1x, v1y},
+                                     vec3i{v2x, v2y}, vec3i{v3x, v3y});
 
                         frameBuffer->set(v1x, v1y, tgaColors::white);
                         frameBuffer->set(v2x, v2y, tgaColors::white);

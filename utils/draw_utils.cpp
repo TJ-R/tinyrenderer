@@ -1,9 +1,6 @@
 #include "draw_utils.h"
 
-namespace DrawUtils {
-
-void drawLinei(TGAImage *frameBuffer, types::vec3i v1, types::vec3i v2,
-               const TGAColor &c) {
+void drawLinei(TGAImage *frameBuffer, vec3i v1, vec3i v2, const TGAColor &c) {
         // frameBuffer->set();
         bool steep = std::abs(v1.x - v2.x) < std::abs(v1.y - v2.y);
         if (steep) {
@@ -34,8 +31,7 @@ void drawLinei(TGAImage *frameBuffer, types::vec3i v1, types::vec3i v2,
         }
 };
 
-void drawLinef(TGAImage *frameBuffer, types::vec3f v1, types::vec3f v2,
-               const TGAColor &c) {
+void drawLinef(TGAImage *frameBuffer, vec3f v1, vec3f v2, const TGAColor &c) {
         // frameBuffer->set();
         bool steep = std::abs(v1.x - v2.x) < std::abs(v1.y - v2.y);
         if (steep) {
@@ -66,14 +62,11 @@ void drawLinef(TGAImage *frameBuffer, types::vec3f v1, types::vec3f v2,
         }
 };
 
-void drawTriangle(TGAImage *frameBuffer, types::vec3i v1, types::vec3i v2,
-                  types::vec3i v3) {
+void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
 
-        std::vector<types::vec3i> vecsBetween1And3 =
-            getVertexsBetweenVertexes(v1, v3);
+        std::vector<vec3i> vecsBetween1And3 = getVertexsBetweenVertexes(v1, v3);
 
-        std::vector<types::vec3i> vecsBetween2And3 =
-            getVertexsBetweenVertexes(v2, v3);
+        std::vector<vec3i> vecsBetween2And3 = getVertexsBetweenVertexes(v2, v3);
 
         // Now draw all lines between both arrays in order
         int v1Idx = 0;
@@ -98,9 +91,8 @@ void drawTriangle(TGAImage *frameBuffer, types::vec3i v1, types::vec3i v2,
 };
 
 /* Getting all of the vertexes between two points */
-std::vector<types::vec3i> getVertexsBetweenVertexes(types::vec3i v1,
-                                                    types::vec3i v2) {
-        std::vector<types::vec3i> vecs;
+std::vector<vec3i> getVertexsBetweenVertexes(vec3i v1, vec3i v2) {
+        std::vector<vec3i> vecs;
         bool steep = std::abs(v1.x - v2.x) < std::abs(v1.y - v2.y);
         if (steep) {
                 std::swap(v1.x, v1.y);
@@ -123,13 +115,11 @@ std::vector<types::vec3i> getVertexsBetweenVertexes(types::vec3i v1,
                 if (steep) {
                         // flipped the x and y back when drawing
                         // since it is currently transposed
-                        vecs.push_back(types::vec3i{y, x});
+                        vecs.push_back(vec3i{y, x});
                 } else {
-                        vecs.push_back(types::vec3i{x, y});
+                        vecs.push_back(vec3i{x, y});
                 }
         }
 
         return vecs;
 }
-
-} // namespace DrawUtils
