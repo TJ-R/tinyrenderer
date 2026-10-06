@@ -29,9 +29,9 @@ int main(int argc, char **argv) {
         // drawLine(&framebuffer, cx, cy, ax, ay, yellow);
         // drawLine(&framebuffer, ax, ay, cx, cy, red);
 
-        int res = drawObjFile("./obj/diablo3_pose/diablo3_pose.obj",
-                              static_cast<float>(width),
-                              static_cast<float>(height), &framebuffer);
+        // int res = drawObjFile("./obj/diablo3_pose/diablo3_pose.obj",
+        //                       static_cast<float>(width),
+        //                       static_cast<float>(height), &framebuffer);
 
         // std::ifstream inf{"./obj/diablo3_pose/diablo3_pose.obj"};
         // std::string strInput;
@@ -45,12 +45,16 @@ int main(int argc, char **argv) {
         // types::vec3f p3 = {62.0, 53.0, 0.0};
         // Triangle triangle = {p1, p2, p3};
         // triangle.draw(&framebuffer, tgaColors::blue);
-
+        //
+        types::vec3i p1 = {7, 3, 0};
+        types::vec3i p2 = {12, 37, 0};
+        types::vec3i p3 = {62, 53, 0};
+        DrawUtils::drawTriangle(&framebuffer, p1, p2, p3);
         framebuffer.write_tga_file("framebuffer.tga");
 
-        if (res != 0) {
-                return res;
-        }
+        // if (res != 0) {
+        //         return res;
+        // }
         return 0;
 }
 
