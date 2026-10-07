@@ -1,4 +1,5 @@
 #include "draw_utils.h"
+#include <iostream>
 
 void drawLinei(TGAImage *frameBuffer, vec3i v1, vec3i v2, const TGAColor &c) {
         // frameBuffer->set();
@@ -63,31 +64,34 @@ void drawLinef(TGAImage *frameBuffer, vec3f v1, vec3f v2, const TGAColor &c) {
 };
 
 void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
+        // Sort by y ... v3 is highest y
+        if (v1.y > v2.y) {
+                std::swap(v1, v2);
+        }
 
-        std::vector<vec3i> vecsBetween1And3 = getVertexsBetweenVertexes(v1, v3);
+        if (v2.y > v3.y) {
+                std::swap(v2, v3);
+        }
 
-        std::vector<vec3i> vecsBetween2And3 = getVertexsBetweenVertexes(v2, v3);
+        // naive and will probably have gaps
+        for (int x = v1.x; x < v3.x; ++x) {
+                int x1 = x;
+                float t = (x - v1.x) / static_cast<float>(v3.x - v1.x);
+                int y1 = std::ceil(v1.y + t * (v3.y - v1.y));
+                int x2 = std::ceil(v2.x + t * (v3.x - v2.x));
+                int y2 = std::ceil(v2.y + t * (v3.y - v2.y));
 
-        // Now draw all lines between both arrays in order
-        int v1Idx = 0;
-        int v2Idx = 0;
-        int v1Max = vecsBetween1And3.size();
-        int v2Max = vecsBetween2And3.size();
+                std::cout << "t is " << t << "\n";
+                std::cout << "v1t From (" << x1 << ", " << y1 << ")\n";
+                std::cout << "v2t From (" << x2 << ", " << y2 << ")\n";
 
-        while (v1Idx != v1Max && v2Idx != v2Max) {
-                drawLinei(frameBuffer, vecsBetween1And3[v1Idx],
-                          vecsBetween2And3[v2Idx], tgaColors::red);
-                if (v1Idx != v1Max) {
-                        v1Idx++;
-                }
-
-                if (v2Idx != v2Max) {
-                        v2Idx++;
-                }
+                drawLinei(frameBuffer, vec3i{x1, y1}, vec3i{x2, y2},
+                          tgaColors::red);
         }
 
         drawLinei(frameBuffer, v1, v3, tgaColors::green);
         drawLinei(frameBuffer, v2, v3, tgaColors::green);
+        drawLinei(frameBuffer, v1, v2, tgaColors::green);
 };
 
 /* Getting all of the vertexes between two points */

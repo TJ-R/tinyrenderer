@@ -12,8 +12,8 @@ int drawObjFile(const char *fileName, const float width, const float height,
                 TGAImage *frameBuffer);
 
 int main(int argc, char **argv) {
-        constexpr int width = 640;
-        constexpr int height = 640;
+        constexpr int width = 1280;
+        constexpr int height = 960;
         TGAImage framebuffer(width, height, TGAImage::RGB);
 
         // int ax = 7, ay = 3;
@@ -49,12 +49,12 @@ int main(int argc, char **argv) {
         // vec3i p1 = {7, 3, 0};
         // vec3i p2 = {12, 37, 0};
         // vec3i p3 = {62, 53, 0};
-        // DrawUtils::drawTriangle(&framebuffer, p1, p2, p3);
+        // drawTriangle(&framebuffer, p1, p2, p3);
         framebuffer.write_tga_file("framebuffer.tga");
 
-        if (res != 0) {
-                return res;
-        }
+        // if (res != 0) {
+        //         return res;
+        // }
         return 0;
 }
 
