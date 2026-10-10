@@ -89,9 +89,9 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                           tgaColors::red);
         }
 
-        drawLinei(frameBuffer, v1, v3, tgaColors::green);
-        drawLinei(frameBuffer, v2, v3, tgaColors::green);
-        drawLinei(frameBuffer, v1, v2, tgaColors::green);
+        drawLinei(frameBuffer, v1, v3, tgaColors::white);
+        drawLinei(frameBuffer, v2, v3, tgaColors::white);
+        drawLinei(frameBuffer, v1, v2, tgaColors::white);
 };
 
 /* Getting all of the vertexes between two points */
