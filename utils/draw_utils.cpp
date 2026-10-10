@@ -73,20 +73,87 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                 std::swap(v2, v3);
         }
 
-        // naive and will probably have gaps
-        for (int x = v1.x; x < v3.x; ++x) {
-                int x1 = x;
-                float t = (x - v1.x) / static_cast<float>(v3.x - v1.x);
-                int y1 = std::ceil(v1.y + t * (v3.y - v1.y));
-                int x2 = std::ceil(v2.x + t * (v3.x - v2.x));
-                int y2 = std::ceil(v2.y + t * (v3.y - v2.y));
+        // This should be refactored into separate functions where it makes
+        // sense Determine which cords have furthest distance
+        int diffV1V3X = std::abs(v3.x - v1.x);
+        int diffV2V3X = std::abs(v3.x - v2.x);
+        int diffV1V3Y = std::abs(v3.y - v1.y);
+        int diffV2V3Y = std::abs(v3.y - v2.y);
 
-                std::cout << "t is " << t << "\n";
-                std::cout << "v1t From (" << x1 << ", " << y1 << ")\n";
-                std::cout << "v2t From (" << x2 << ", " << y2 << ")\n";
+        if (diffV1V3X >= diffV2V3X && diffV1V3X > diffV1V3Y &&
+            diffV1V3X > diffV2V3Y) {
+                // do nothing
+                for (int x = v1.x; x < v3.x; ++x) {
+                        int x1 = x;
+                        float t = (x - v1.x) / static_cast<float>(v3.x - v1.x);
+                        int y1 = std::round(v1.y + t * (v3.y - v1.y));
+                        int x2 = std::round(v2.x + t * (v3.x - v2.x));
+                        int y2 = std::round(v2.y + t * (v3.y - v2.y));
 
-                drawLinei(frameBuffer, vec3i{x1, y1}, vec3i{x2, y2},
-                          tgaColors::red);
+                        std::cout << "t is " << t << "\n";
+                        std::cout << "v1t From (" << x1 << ", " << y1 << ")\n";
+                        std::cout << "v2t From (" << x2 << ", " << y2 << ")\n";
+
+                        drawLinei(frameBuffer, vec3i{x1, y1}, vec3i{x2, y2},
+                                  tgaColors::red);
+                }
+
+        } else if (diffV2V3X >= diffV1V3X && diffV2V3X > diffV1V3Y &&
+                   diffV2V3X > diffV2V3Y) {
+                std::swap(v1, v2);
+                for (int x = v1.x; x < v3.x; ++x) {
+                        int x1 = x;
+                        float t = (x - v1.x) / static_cast<float>(v3.x - v1.x);
+                        int y1 = std::round(v1.y + t * (v3.y - v1.y));
+                        int x2 = std::round(v2.x + t * (v3.x - v2.x));
+                        int y2 = std::round(v2.y + t * (v3.y - v2.y));
+
+                        std::cout << "t is " << t << "\n";
+                        std::cout << "v1t From (" << x1 << ", " << y1 << ")\n";
+                        std::cout << "v2t From (" << x2 << ", " << y2 << ")\n";
+
+                        drawLinei(frameBuffer, vec3i{x1, y1}, vec3i{x2, y2},
+                                  tgaColors::red);
+                }
+        } else if (diffV1V3Y >= diffV1V3X && diffV1V3Y > diffV1V3X &&
+                   diffV1V3Y > diffV2V3Y) {
+                std::swap(v1.x, v1.y);
+                std::swap(v2.x, v2.y);
+                for (int x = v1.x; x < v3.x; ++x) {
+                        int x1 = x;
+                        float t = (x - v1.x) / static_cast<float>(v3.x - v1.x);
+                        int y1 = std::round(v1.y + t * (v3.y - v1.y));
+                        int x2 = std::round(v2.x + t * (v3.x - v2.x));
+                        int y2 = std::round(v2.y + t * (v3.y - v2.y));
+
+                        std::cout << "t is " << t << "\n";
+                        std::cout << "v1t From (" << x1 << ", " << y1 << ")\n";
+                        std::cout << "v2t From (" << x2 << ", " << y2 << ")\n";
+
+                        // Flipped due to swap a top of block
+                        drawLinei(frameBuffer, vec3i{y1, x1}, vec3i{y2, x2},
+                                  tgaColors::red);
+                }
+
+        } else {
+                std::swap(v1, v2);
+                std::swap(v1.x, v1.y);
+                std::swap(v2.x, v2.y);
+                for (int x = v1.x; x < v3.x; ++x) {
+                        int x1 = x;
+                        float t = (x - v1.x) / static_cast<float>(v3.x - v1.x);
+                        int y1 = std::round(v1.y + t * (v3.y - v1.y));
+                        int x2 = std::round(v2.x + t * (v3.x - v2.x));
+                        int y2 = std::round(v2.y + t * (v3.y - v2.y));
+
+                        std::cout << "t is " << t << "\n";
+                        std::cout << "v1t From (" << x1 << ", " << y1 << ")\n";
+                        std::cout << "v2t From (" << x2 << ", " << y2 << ")\n";
+
+                        // Flipped due to swap a top of block
+                        drawLinei(frameBuffer, vec3i{y1, x1}, vec3i{y2, x2},
+                                  tgaColors::red);
+                }
         }
 
         drawLinei(frameBuffer, v1, v3, tgaColors::white);
