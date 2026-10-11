@@ -7,7 +7,8 @@
 
 void drawLinei(TGAImage *frameBuffer, vec3i v1, vec3i v2, const TGAColor &c);
 
-void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3);
+void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3,
+                  const TGAColor &c);
 
 std::vector<vec3i> getVertexsBetweenVertexes(vec3i v1, vec3i v2);
 

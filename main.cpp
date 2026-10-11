@@ -16,45 +16,15 @@ int main(int argc, char **argv) {
         constexpr int height = 960;
         TGAImage framebuffer(width, height, TGAImage::RGB);
 
-        // int ax = 7, ay = 3;
-        // int bx = 12, by = 37;
-        // int cx = 62, cy = 53;
-        //
-        // framebuffer.set(ax, ay, white);
-        // framebuffer.set(bx, by, white);
-        // framebuffer.set(cx, cy, white);
-
-        // drawLine(&framebuffer, ax, ay, bx, by, blue);
-        // drawLine(&framebuffer, cx, cy, bx, by, green);
-        // drawLine(&framebuffer, cx, cy, ax, ay, yellow);
-        // drawLine(&framebuffer, ax, ay, cx, cy, red);
-
         int res = drawObjFile("./obj/diablo3_pose/diablo3_pose.obj",
                               static_cast<float>(width),
                               static_cast<float>(height), &framebuffer);
 
-        // std::ifstream inf{"./obj/diablo3_pose/diablo3_pose.obj"};
-        // std::string strInput;
-        // for (int i = 0; i < 10; ++i) {
-        //         std::getline(inf, strInput);
-        //         std::cout << "Num of bytes in line " << i << " is "
-        //                   << strInput.size() << " bytes\n";
-        // }
-        // vec3f p1 = {7.0, 3.0, 0.0};
-        // vec3f p2 = {12.0, 37.0, 0.0};
-        // vec3f p3 = {62.0, 53.0, 0.0};
-        // Triangle triangle = {p1, p2, p3};
-        // triangle.draw(&framebuffer, tgaColors::blue);
-        //
-        // vec3i p1 = {7, 3, 0};
-        // vec3i p2 = {12, 37, 0};
-        // vec3i p3 = {62, 53, 0};
-        // drawTriangle(&framebuffer, p1, p2, p3);
         framebuffer.write_tga_file("framebuffer.tga");
 
-        // if (res != 0) {
-        //         return res;
-        // }
+        if (res != 0) {
+                return res;
+        }
         return 0;
 }
 
@@ -71,6 +41,7 @@ int drawObjFile(const char *fileName, const float width, const float height,
 
         std::vector<vec3f> verticies;
         std::string strInput;
+        int count = 0;
         while (std::getline(inf, strInput)) {
                 if (strInput[0] == 'v' && strInput[1] == ' ') {
                         std::vector<std::string> tokens = split(strInput, " ");
@@ -109,19 +80,32 @@ int drawObjFile(const char *fileName, const float width, const float height,
                         int v3x = std::round(verticies[vIdx3].x * (width / 2));
                         int v3y = std::round(verticies[vIdx3].y * (height / 2));
 
-                        // DrawUtils::drawLinei(
-                        //     frameBuffer, vec3i{v1x, v1y},
-                        //     vec3i{v2x, v2y}, tgaColors::red);
-                        // DrawUtils::drawLinei(
-                        //     frameBuffer, vec3i{v2x, v2y},
-                        //     vec3i{v3x, v3y}, tgaColors::red);
-                        // DrawUtils::drawLinei(
-                        //     frameBuffer, vec3i{v3x, v3y},
-                        //     vec3i{v1x, v1y}, tgaColors::red);
-
-                        drawTriangle(frameBuffer, vec3i{v1x, v1y},
-                                     vec3i{v2x, v2y}, vec3i{v3x, v3y});
-
+                        if (count == 0) {
+                                drawTriangle(frameBuffer, vec3i{v1x, v1y},
+                                             vec3i{v2x, v2y}, vec3i{v3x, v3y},
+                                             tgaColors::red);
+                                count++;
+                        } else if (count == 1) {
+                                drawTriangle(frameBuffer, vec3i{v1x, v1y},
+                                             vec3i{v2x, v2y}, vec3i{v3x, v3y},
+                                             tgaColors::blue);
+                                count++;
+                        } else if (count == 2) {
+                                drawTriangle(frameBuffer, vec3i{v1x, v1y},
+                                             vec3i{v2x, v2y}, vec3i{v3x, v3y},
+                                             tgaColors::green);
+                                count++;
+                        } else if (count == 3) {
+                                drawTriangle(frameBuffer, vec3i{v1x, v1y},
+                                             vec3i{v2x, v2y}, vec3i{v3x, v3y},
+                                             tgaColors::yellow);
+                                count++;
+                        } else {
+                                drawTriangle(frameBuffer, vec3i{v1x, v1y},
+                                             vec3i{v2x, v2y}, vec3i{v3x, v3y},
+                                             tgaColors::white);
+                                count = 0;
+                        }
                         frameBuffer->set(v1x, v1y, tgaColors::white);
                         frameBuffer->set(v2x, v2y, tgaColors::white);
                         frameBuffer->set(v3x, v3y, tgaColors::white);
