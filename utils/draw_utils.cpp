@@ -115,10 +115,12 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                         drawLinei(frameBuffer, vec3i{x1, y1}, vec3i{x2, y2},
                                   tgaColors::red);
                 }
+                std::swap(v1, v2);
         } else if (diffV1V3Y >= diffV1V3X && diffV1V3Y > diffV1V3X &&
                    diffV1V3Y > diffV2V3Y) {
                 std::swap(v1.x, v1.y);
                 std::swap(v2.x, v2.y);
+                std::swap(v3.x, v3.y);
                 for (int x = v1.x; x < v3.x; ++x) {
                         int x1 = x;
                         float t = (x - v1.x) / static_cast<float>(v3.x - v1.x);
@@ -134,11 +136,15 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                         drawLinei(frameBuffer, vec3i{y1, x1}, vec3i{y2, x2},
                                   tgaColors::red);
                 }
+                std::swap(v1.x, v1.y);
+                std::swap(v2.x, v2.y);
+                std::swap(v3.x, v3.y);
 
         } else {
                 std::swap(v1, v2);
                 std::swap(v1.x, v1.y);
                 std::swap(v2.x, v2.y);
+                std::swap(v3.x, v3.y);
                 for (int x = v1.x; x < v3.x; ++x) {
                         int x1 = x;
                         float t = (x - v1.x) / static_cast<float>(v3.x - v1.x);
@@ -154,6 +160,10 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                         drawLinei(frameBuffer, vec3i{y1, x1}, vec3i{y2, x2},
                                   tgaColors::red);
                 }
+                std::swap(v1, v2);
+                std::swap(v1.x, v1.y);
+                std::swap(v2.x, v2.y);
+                std::swap(v3.x, v3.y);
         }
 
         drawLinei(frameBuffer, v1, v3, tgaColors::white);
