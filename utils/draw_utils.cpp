@@ -88,14 +88,11 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                         for (int x = v1.x; x < v3.x; ++x) {
                                 int x1 = x;
                                 float t =
-                                    (x - v1.x) /
+                                    (std::abs(x - v1.x)) /
                                     static_cast<float>(std::abs(v3.x - v1.x));
-                                int y1 = std::round(
-                                    v1.y + t * (std::abs(v3.y - v1.y)));
-                                int x2 = std::round(
-                                    v2.x + t * (std::abs(v3.x - v2.x)));
-                                int y2 = std::round(
-                                    v2.y + t * (std::abs(v3.y - v2.y)));
+                                int y1 = std::round(v1.y + t * (v3.y - v1.y));
+                                int x2 = std::round(v2.x + t * (v3.x - v2.x));
+                                int y2 = std::round(v2.y + t * (v3.y - v2.y));
 
                                 std::cout << "t is " << t << "\n";
                                 std::cout << "v1t From (" << x1 << ", " << y1
@@ -111,14 +108,11 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                         for (int x = v1.x; x > v3.x; --x) {
                                 int x1 = x;
                                 float t =
-                                    (x - v1.x) /
+                                    (std::abs(x - v1.x)) /
                                     static_cast<float>(std::abs(v3.x - v1.x));
-                                int y1 = std::round(
-                                    v1.y + t * (std::abs(v3.y - v1.y)));
-                                int x2 = std::round(
-                                    v2.x + t * (std::abs(v3.x - v2.x)));
-                                int y2 = std::round(
-                                    v2.y + t * (std::abs(v3.y - v2.y)));
+                                int y1 = std::round(v1.y + t * (v3.y - v1.y));
+                                int x2 = std::round(v2.x + t * (v3.x - v2.x));
+                                int y2 = std::round(v2.y + t * (v3.y - v2.y));
 
                                 std::cout << "t is " << t << "\n";
                                 std::cout << "v1t From (" << x1 << ", " << y1
@@ -126,14 +120,13 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                                 std::cout << "v2t From (" << x2 << ", " << y2
                                           << ")\n";
 
-                                // Flipped due to swap a top of block
                                 drawLinei(frameBuffer, vec3i{x1, y1},
                                           vec3i{x2, y2}, tgaColors::red);
                         }
                 }
-                drawLinei(frameBuffer, v1, v3, tgaColors::green);
-                drawLinei(frameBuffer, v2, v3, tgaColors::green);
-                drawLinei(frameBuffer, v1, v2, tgaColors::green);
+                drawLinei(frameBuffer, v1, v3, tgaColors::white);
+                drawLinei(frameBuffer, v2, v3, tgaColors::white);
+                drawLinei(frameBuffer, v1, v2, tgaColors::white);
         } else if (diffV2V3X >= diffV1V3X && diffV2V3X >= diffV1V3Y &&
                    diffV2V3X >= diffV2V3Y) {
                 std::swap(v1, v2);
@@ -142,14 +135,11 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                         for (int x = v1.x; x < v3.x; ++x) {
                                 int x1 = x;
                                 float t =
-                                    (x - v1.x) /
+                                    (std::abs(x - v1.x)) /
                                     static_cast<float>(std::abs(v3.x - v1.x));
-                                int y1 = std::round(
-                                    v1.y + t * (std::abs(v3.y - v1.y)));
-                                int x2 = std::round(
-                                    v2.x + t * (std::abs(v3.x - v2.x)));
-                                int y2 = std::round(
-                                    v2.y + t * (std::abs(v3.y - v2.y)));
+                                int y1 = std::round(v1.y + t * (v3.y - v1.y));
+                                int x2 = std::round(v2.x + t * (v3.x - v2.x));
+                                int y2 = std::round(v2.y + t * (v3.y - v2.y));
 
                                 std::cout << "t is " << t << "\n";
                                 std::cout << "v1t From (" << x1 << ", " << y1
@@ -157,7 +147,6 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                                 std::cout << "v2t From (" << x2 << ", " << y2
                                           << ")\n";
 
-                                // Flipped due to swap a top of block
                                 drawLinei(frameBuffer, vec3i{x1, y1},
                                           vec3i{x2, y2}, tgaColors::red);
                         }
@@ -165,14 +154,11 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                         for (int x = v1.x; x > v3.x; --x) {
                                 int x1 = x;
                                 float t =
-                                    (x - v1.x) /
+                                    (std::abs(x - v1.x)) /
                                     static_cast<float>(std::abs(v3.x - v1.x));
-                                int y1 = std::round(
-                                    v1.y + t * (std::abs(v3.y - v1.y)));
-                                int x2 = std::round(
-                                    v2.x + t * (std::abs(v3.x - v2.x)));
-                                int y2 = std::round(
-                                    v2.y + t * (std::abs(v3.y - v2.y)));
+                                int y1 = std::round(v1.y + t * (v3.y - v1.y));
+                                int x2 = std::round(v2.x + t * (v3.x - v2.x));
+                                int y2 = std::round(v2.y + t * (v3.y - v2.y));
 
                                 std::cout << "t is " << t << "\n";
                                 std::cout << "v1t From (" << x1 << ", " << y1
@@ -180,7 +166,6 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                                 std::cout << "v2t From (" << x2 << ", " << y2
                                           << ")\n";
 
-                                // Flipped due to swap a top of block
                                 drawLinei(frameBuffer, vec3i{x1, y1},
                                           vec3i{x2, y2}, tgaColors::red);
                         }
@@ -199,14 +184,11 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                         for (int x = v1.x; x < v3.x; ++x) {
                                 int x1 = x;
                                 float t =
-                                    (x - v1.x) /
+                                    (std::abs(x - v1.x)) /
                                     static_cast<float>(std::abs(v3.x - v1.x));
-                                int y1 = std::round(
-                                    v1.y + t * (std::abs(v3.y - v1.y)));
-                                int x2 = std::round(
-                                    v2.x + t * (std::abs(v3.x - v2.x)));
-                                int y2 = std::round(
-                                    v2.y + t * (std::abs(v3.y - v2.y)));
+                                int y1 = std::round(v1.y + t * (v3.y - v1.y));
+                                int x2 = std::round(v2.x + t * (v3.x - v2.x));
+                                int y2 = std::round(v2.y + t * (v3.y - v2.y));
 
                                 std::cout << "t is " << t << "\n";
                                 std::cout << "v1t From (" << x1 << ", " << y1
@@ -222,14 +204,11 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                         for (int x = v1.x; x > v3.x; --x) {
                                 int x1 = x;
                                 float t =
-                                    (x - v1.x) /
+                                    (std::abs(x - v1.x)) /
                                     static_cast<float>(std::abs(v3.x - v1.x));
-                                int y1 = std::round(
-                                    v1.y + t * (std::abs(v3.y - v1.y)));
-                                int x2 = std::round(
-                                    v2.x + t * (std::abs(v3.x - v2.x)));
-                                int y2 = std::round(
-                                    v2.y + t * (std::abs(v3.y - v2.y)));
+                                int y1 = std::round(v1.y + t * (v3.y - v1.y));
+                                int x2 = std::round(v2.x + t * (v3.x - v2.x));
+                                int y2 = std::round(v2.y + t * (v3.y - v2.y));
 
                                 std::cout << "t is " << t << "\n";
                                 std::cout << "v1t From (" << x1 << ", " << y1
@@ -260,14 +239,11 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                         for (int x = v1.x; x < v3.x; ++x) {
                                 int x1 = x;
                                 float t =
-                                    (x - v1.x) /
+                                    (std::abs(x - v1.x)) /
                                     static_cast<float>(std::abs(v3.x - v1.x));
-                                int y1 = std::round(
-                                    v1.y + t * (std::abs(v3.y - v1.y)));
-                                int x2 = std::round(
-                                    v2.x + t * (std::abs(v3.x - v2.x)));
-                                int y2 = std::round(
-                                    v2.y + t * (std::abs(v3.y - v2.y)));
+                                int y1 = std::round(v1.y + t * (v3.y - v1.y));
+                                int x2 = std::round(v2.x + t * (v3.x - v2.x));
+                                int y2 = std::round(v2.y + t * (v3.y - v2.y));
 
                                 std::cout << "t is " << t << "\n";
                                 std::cout << "v1t From (" << x1 << ", " << y1
@@ -285,12 +261,9 @@ void drawTriangle(TGAImage *frameBuffer, vec3i v1, vec3i v2, vec3i v3) {
                                 float t =
                                     (x - v1.x) /
                                     static_cast<float>(std::abs(v3.x - v1.x));
-                                int y1 = std::round(
-                                    v1.y + t * (std::abs(v3.y - v1.y)));
-                                int x2 = std::round(
-                                    v2.x + t * (std::abs(v3.x - v2.x)));
-                                int y2 = std::round(
-                                    v2.y + t * (std::abs(v3.y - v2.y)));
+                                int y1 = std::round(v1.y + t * (v3.y - v1.y));
+                                int x2 = std::round(v2.x + t * (v3.x - v2.x));
+                                int y2 = std::round(v2.y + t * (v3.y - v2.y));
 
                                 std::cout << "t is " << t << "\n";
                                 std::cout << "v1t From (" << x1 << ", " << y1
