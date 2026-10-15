@@ -11,20 +11,42 @@
 int drawObjFile(const char *fileName, const float width, const float height,
                 TGAImage *frameBuffer);
 
+void triangle(vec3i a, vec3i b, vec3i c, TGAImage *frameBuffer,
+              const TGAColor &color) {
+        int bboxMaxX = std::max(std::max(a.x, b.x), c.x);
+        int bboxMaxY = std::max(std::max(a.y, b.y), c.y);
+        int bboxMinX = std::min(std::min(a.x, b.x), c.x);
+        int bboxMinY = std::min(std::min(a.y, b.y), c.y);
+
+#pragma omp parallel for // Saying run loop in parallel
+        for (int x = bboxMinX; x <= bboxMaxX; ++x) {
+                for (int y = bboxMinY; y <= bboxMaxY; ++y) {
+                        frameBuffer->set(x, y, color);
+                }
+        }
+}
+
 int main(int argc, char **argv) {
-        constexpr int width = 1280;
-        constexpr int height = 960;
+        constexpr int width = 128;
+        constexpr int height = 128;
         TGAImage framebuffer(width, height, TGAImage::RGB);
 
-        int res = drawObjFile("./obj/diablo3_pose/diablo3_pose.obj",
-                              static_cast<float>(width),
-                              static_cast<float>(height), &framebuffer);
+        // int res = drawObjFile("./obj/diablo3_pose/diablo3_pose.obj",
+        //                       static_cast<float>(width),
+        //                       static_cast<float>(height),
+        //                       &framebuffer);
+
+        vec3i a = vec3i{25, 25};
+        vec3i b = vec3i{10, 35};
+        vec3i c = vec3i{5, 5};
+
+        triangle(a, b, c, &framebuffer, tgaColors::white);
 
         framebuffer.write_tga_file("framebuffer.tga");
 
-        if (res != 0) {
-                return res;
-        }
+        // if (res != 0) {
+        //         return res;
+        // }
         return 0;
 }
 
