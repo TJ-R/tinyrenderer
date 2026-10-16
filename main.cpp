@@ -11,6 +11,27 @@
 int drawObjFile(const char *fileName, const float width, const float height,
                 TGAImage *frameBuffer);
 
+bool pixelInside(vec3i a, vec3i b, vec3i c, vec3i p) {
+        // p = u*a + v*b + w*c
+        // Area ABC
+        double totalArea =
+            0.5 * (a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y));
+
+        double alpha = (0.5 * (p.x * (b.y - c.y) + b.x * (c.y - p.y) +
+                               c.x * (p.y - b.y))) /
+                       totalArea;
+
+        double beta = (0.5 * (a.x * (p.y - c.y) + p.x * (c.y - a.y) +
+                              c.x * (a.y - p.y))) /
+                      totalArea;
+
+        double gamma = (0.5 * (a.x * (b.y - p.y) + b.x * (p.y - a.y) +
+                               p.x * (a.y - b.y))) /
+                       totalArea;
+
+        return alpha > 0 && beta > 0 && gamma > 0;
+}
+
 void triangle(vec3i a, vec3i b, vec3i c, TGAImage *frameBuffer,
               const TGAColor &color) {
         int bboxMaxX = std::max(std::max(a.x, b.x), c.x);
@@ -21,7 +42,9 @@ void triangle(vec3i a, vec3i b, vec3i c, TGAImage *frameBuffer,
 #pragma omp parallel for // Saying run loop in parallel
         for (int x = bboxMinX; x <= bboxMaxX; ++x) {
                 for (int y = bboxMinY; y <= bboxMaxY; ++y) {
-                        frameBuffer->set(x, y, color);
+                        if (pixelInside(a, b, c, vec3i{x, y})) {
+                                frameBuffer->set(x, y, color);
+                        }
                 }
         }
 }
@@ -40,7 +63,8 @@ int main(int argc, char **argv) {
         vec3i b = vec3i{10, 35};
         vec3i c = vec3i{5, 5};
 
-        triangle(a, b, c, &framebuffer, tgaColors::white);
+        // triangle(a, b, c, &framebuffer, tgaColors::white);
+        drawTriangle(&framebuffer, a, b, c, tgaColors::red);
 
         framebuffer.write_tga_file("framebuffer.tga");
 
