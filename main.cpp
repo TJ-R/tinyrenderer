@@ -17,11 +17,8 @@ std::tuple<int, int> project(vec3f v, int width, int height) {
         // + 1 => [0, 2] and then divide by 2
         // => [0, 1]
 
-        int ax = ((v.x + 1.) * width) / 2.0;
-        int ay = ((v.y + 1.) * height) / 2.0;
-
-        std::cout << ax << "\n";
-        std::cout << ay << "\n";
+        int ax = ((v.x + 1.) * width / 2);
+        int ay = ((v.y + 1.) * height / 2);
 
         return std::make_tuple(ax, ay);
 };
@@ -72,8 +69,8 @@ void triangle(TGAImage *frameBuffer, vec3i a, vec3i b, vec3i c,
 }
 
 int main(int argc, char **argv) {
-        constexpr int width = 1280;
-        constexpr int height = 960;
+        constexpr int width = 2000;
+        constexpr int height = 2000;
         TGAImage framebuffer(width, height, TGAImage::RGB);
 
         if (argc < 2) {
@@ -82,10 +79,6 @@ int main(int argc, char **argv) {
         }
 
         Model model(argv[1]);
-
-        std::cout << "Found: " << model.nverts() << " number of verts\n";
-        std::cout << "Found: " << model.nfaces() << " number of faces\n";
-
         for (int i = 0; i < model.nfaces(); i++) {
                 auto [ax, ay] = project(model.vert(i, 0), width, height);
                 auto [bx, by] = project(model.vert(i, 1), width, height);
@@ -96,12 +89,20 @@ int main(int argc, char **argv) {
                         rnd[c] = std::rand() % 255;
 
                 triangle(&framebuffer, {ax, ay}, {bx, by}, {cx, cy}, rnd);
+                // drawLinei(&framebuffer, vec3i{ax, ay}, vec3i{bx, by},
+                //           tgaColors::red);
+                // drawLinei(&framebuffer, vec3i{ax, ay}, vec3i{cx, cy},
+                //           tgaColors::red);
+                // drawLinei(&framebuffer, vec3i{cx, cy}, vec3i{bx, by},
+                //           tgaColors::red);
         }
 
         // vec3i a = vec3i{25, 25};
         // vec3i b = vec3i{10, 35};
         // vec3i c = vec3i{5, 5};
+
         // drawTriangle(&framebuffer, a, b, c, tgaColors::red);
+        // triangle(&framebuffer, a, b, c, tgaColors::red);
 
         framebuffer.write_tga_file("framebuffer.tga");
         return 0;

@@ -27,21 +27,18 @@ Model::Model(std::string filename) {
 
                         pos = 0;
                         nextPos = faceStrs[1].find("/", pos);
-                        int vIdx1 =
-                            std::stoi(faceStrs[1].substr(pos, nextPos)) - 1;
-                        face_verts.push_back(vIdx1);
+                        int vIdx1 = std::stoi(faceStrs[1].substr(pos, nextPos));
+                        face_verts.push_back(vIdx1 - 1);
 
                         pos = 0;
                         nextPos = faceStrs[2].find("/", pos);
-                        int vIdx2 =
-                            std::stoi(faceStrs[2].substr(pos, nextPos)) - 1;
-                        face_verts.push_back(vIdx2);
+                        int vIdx2 = std::stoi(faceStrs[2].substr(pos, nextPos));
+                        face_verts.push_back(vIdx2 - 1);
 
                         pos = 0;
                         nextPos = faceStrs[3].find("/", pos);
-                        int vIdx3 =
-                            std::stoi(faceStrs[3].substr(pos, nextPos)) - 1;
-                        face_verts.push_back(vIdx3);
+                        int vIdx3 = std::stoi(faceStrs[3].substr(pos, nextPos));
+                        face_verts.push_back(vIdx3 - 1);
                 }
         }
 }
@@ -59,5 +56,7 @@ vec3f Model::vert(const int i) const {
 }
 
 vec3f Model::vert(const int iface, const int nthvert) const {
-        return verts[face_verts[iface + nthvert]];
+        int idx = iface * 3 + nthvert;
+
+        return verts[face_verts[idx]];
 }
