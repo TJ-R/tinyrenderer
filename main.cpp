@@ -1,7 +1,7 @@
+#include "model.h"
 #include "tgaimage.h"
 #include "triangle.cpp"
 #include "types.h"
-#include "utils/draw_utils.h"
 #include "utils/string_utils.h"
 #include <cmath>
 #include <fstream>
@@ -10,6 +10,21 @@
 
 int drawObjFile(const char *fileName, const float width, const float height,
                 TGAImage *frameBuffer);
+
+std::tuple<int, int> project(vec3f v, int width, int height) {
+        // v is currently from [-1, 1] range
+        // need to move it on our plane so
+        // + 1 => [0, 2] and then divide by 2
+        // => [0, 1]
+
+        int ax = ((v.x + 1.) * width) / 2.0;
+        int ay = ((v.y + 1.) * height) / 2.0;
+
+        std::cout << ax << "\n";
+        std::cout << ay << "\n";
+
+        return std::make_tuple(ax, ay);
+};
 
 bool pixelInside(vec3i a, vec3i b, vec3i c, vec3i p) {
         // p = u*a + v*b + w*c
@@ -57,25 +72,38 @@ void triangle(TGAImage *frameBuffer, vec3i a, vec3i b, vec3i c,
 }
 
 int main(int argc, char **argv) {
-        constexpr int width = 1920;
-        constexpr int height = 1080;
+        constexpr int width = 1280;
+        constexpr int height = 960;
         TGAImage framebuffer(width, height, TGAImage::RGB);
 
-        int res = drawObjFile("./obj/inset_cube.obj", static_cast<float>(width),
-                              static_cast<float>(height), &framebuffer);
+        if (argc < 2) {
+                std::cout << "Usage: " << argv[0] << " obj/model.obj\n";
+                return 1;
+        }
 
-        vec3i a = vec3i{25, 25};
-        vec3i b = vec3i{10, 35};
-        vec3i c = vec3i{5, 5};
+        Model model(argv[1]);
 
-        // triangle(&framebuffer, a, b, c, tgaColors::white);
+        std::cout << "Found: " << model.nverts() << " number of verts\n";
+        std::cout << "Found: " << model.nfaces() << " number of faces\n";
+
+        for (int i = 0; i < model.nfaces(); i++) {
+                auto [ax, ay] = project(model.vert(i, 0), width, height);
+                auto [bx, by] = project(model.vert(i, 1), width, height);
+                auto [cx, cy] = project(model.vert(i, 2), width, height);
+
+                TGAColor rnd;
+                for (int c = 0; c < 3; c++)
+                        rnd[c] = std::rand() % 255;
+
+                triangle(&framebuffer, {ax, ay}, {bx, by}, {cx, cy}, rnd);
+        }
+
+        // vec3i a = vec3i{25, 25};
+        // vec3i b = vec3i{10, 35};
+        // vec3i c = vec3i{5, 5};
         // drawTriangle(&framebuffer, a, b, c, tgaColors::red);
 
         framebuffer.write_tga_file("framebuffer.tga");
-
-        if (res != 0) {
-                return res;
-        }
         return 0;
 }
 
