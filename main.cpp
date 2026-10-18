@@ -23,27 +23,6 @@ std::tuple<int, int> project(vec3f v, int width, int height) {
         return std::make_tuple(ax, ay);
 };
 
-bool pixelInside(vec3i a, vec3i b, vec3i c, vec3i p) {
-        // p = u*a + v*b + w*c
-        // Area ABC
-        double totalArea =
-            0.5 * (a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y));
-
-        double alpha = (0.5 * (p.x * (b.y - c.y) + b.x * (c.y - p.y) +
-                               c.x * (p.y - b.y))) /
-                       totalArea;
-
-        double beta = (0.5 * (a.x * (p.y - c.y) + p.x * (c.y - a.y) +
-                              c.x * (a.y - p.y))) /
-                      totalArea;
-
-        double gamma = (0.5 * (a.x * (b.y - p.y) + b.x * (p.y - a.y) +
-                               p.x * (a.y - b.y))) /
-                       totalArea;
-
-        return alpha > 0 && beta > 0 && gamma > 0;
-}
-
 void triangle(TGAImage *frameBuffer, vec3i a, vec3i b, vec3i c,
               const TGAColor &color) {
         int bboxMaxX = std::max(std::max(a.x, b.x), c.x);
@@ -61,48 +40,76 @@ void triangle(TGAImage *frameBuffer, vec3i a, vec3i b, vec3i c,
 #pragma omp parallel for // Saying run loop in parallel
         for (int x = bboxMinX; x <= bboxMaxX; ++x) {
                 for (int y = bboxMinY; y <= bboxMaxY; ++y) {
-                        if (pixelInside(a, b, c, vec3i{x, y})) {
-                                frameBuffer->set(x, y, color);
+                        double alpha =
+                            (0.5 * (x * (b.y - c.y) + b.x * (c.y - y) +
+                                    c.x * (y - b.y))) /
+                            totalArea;
+
+                        double beta =
+                            (0.5 * (a.x * (y - c.y) + x * (c.y - a.y) +
+                                    c.x * (a.y - y))) /
+                            totalArea;
+
+                        double gamma =
+                            (0.5 * (a.x * (b.y - y) + b.x * (y - a.y) +
+                                    x * (a.y - b.y))) /
+                            totalArea;
+
+                        if (alpha < 0 || beta < 0 || gamma < 0)
+                                continue;
+
+                        TGAColor barycentric;
+                        if (alpha < 0.1 || beta < 0.1 || gamma < 0.1) {
+                                barycentric[0] = 255 * alpha;
+                                barycentric[1] = 255 * beta;
+                                barycentric[2] = 255 * gamma;
+                        } else {
+
+                                barycentric[0] = 0;
+                                barycentric[1] = 0;
+                                barycentric[2] = 0;
                         }
+
+                        frameBuffer->set(x, y, barycentric);
                 }
         }
 }
 
 int main(int argc, char **argv) {
-        constexpr int width = 2000;
-        constexpr int height = 2000;
+        constexpr int width = 100;
+        constexpr int height = 100;
         TGAImage framebuffer(width, height, TGAImage::RGB);
 
-        if (argc < 2) {
-                std::cout << "Usage: " << argv[0] << " obj/model.obj\n";
-                return 1;
-        }
+        // if (argc < 2) {
+        //         std::cout << "Usage: " << argv[0] << " obj/model.obj\n";
+        //         return 1;
+        // }
 
-        Model model(argv[1]);
-        for (int i = 0; i < model.nfaces(); i++) {
-                auto [ax, ay] = project(model.vert(i, 0), width, height);
-                auto [bx, by] = project(model.vert(i, 1), width, height);
-                auto [cx, cy] = project(model.vert(i, 2), width, height);
+        // Model model(argv[1]);
+        // for (int i = 0; i < model.nfaces(); i++) {
+        //         auto [ax, ay] = project(model.vert(i, 0), width, height);
+        //         auto [bx, by] = project(model.vert(i, 1), width, height);
+        //         auto [cx, cy] = project(model.vert(i, 2), width, height);
+        //
+        //         TGAColor rnd;
+        //         for (int c = 0; c < 3; c++)
+        //                 rnd[c] = std::rand() % 255;
+        //
+        //         triangle(&framebuffer, {ax, ay}, {bx, by}, {cx, cy}, rnd);
+        //         // drawLinei(&framebuffer, vec3i{ax, ay}, vec3i{bx, by},
+        //         //           tgaColors::red);
+        //         // drawLinei(&framebuffer, vec3i{ax, ay}, vec3i{cx, cy},
+        //         //           tgaColors::red);
+        //         // drawLinei(&framebuffer, vec3i{cx, cy}, vec3i{bx, by},
+        //         //           tgaColors::red);
+        // }
 
-                TGAColor rnd;
-                for (int c = 0; c < 3; c++)
-                        rnd[c] = std::rand() % 255;
-
-                triangle(&framebuffer, {ax, ay}, {bx, by}, {cx, cy}, rnd);
-                // drawLinei(&framebuffer, vec3i{ax, ay}, vec3i{bx, by},
-                //           tgaColors::red);
-                // drawLinei(&framebuffer, vec3i{ax, ay}, vec3i{cx, cy},
-                //           tgaColors::red);
-                // drawLinei(&framebuffer, vec3i{cx, cy}, vec3i{bx, by},
-                //           tgaColors::red);
-        }
-
-        // vec3i a = vec3i{25, 25};
-        // vec3i b = vec3i{10, 35};
-        // vec3i c = vec3i{5, 5};
+        vec3i a = vec3i{20, 20};
+        vec3i b = vec3i{80, 65};
+        vec3i c = vec3i{50, 85};
 
         // drawTriangle(&framebuffer, a, b, c, tgaColors::red);
-        // triangle(&framebuffer, a, b, c, tgaColors::red);
+        triangle(&framebuffer, a, b, c, tgaColors::red);
 
         framebuffer.write_tga_file("framebuffer.tga");
         return 0;
