@@ -26,9 +26,27 @@ template <int n> struct vec {
                 assert(i >= 0 && i < n);
                 return data[i];
         }
+
         double operator[](const int i) const {
                 assert(i >= 0 && i < n);
                 return data[i];
+        }
+
+        vec<n> &operator+=(const vec<n> &rhs) {
+                for (int i = 0; i < n; i++) {
+                        data[i] += rhs.data[i];
+                }
+
+                return *this;
+        }
+
+        double dot(const vec<n> &rhs) {
+                double sum = 0;
+                for (int i = 0; i < n; i++) {
+                        sum += (data[i] * rhs.data[i]);
+                }
+
+                return sum;
         }
 };
 
@@ -38,20 +56,12 @@ template <int n> std::ostream &operator<<(std::ostream &out, const vec<n> &v) {
         return out;
 }
 
-template <> struct vec<3> {
-        double x = 0, y = 0, z = 0;
-        double &operator[](const int i) {
-                assert(i >= 0 && i < 3);
-                return i ? (1 == i ? y : z) : x;
-        }
-        double operator[](const int i) const {
-                assert(i >= 0 && i < 3);
-                return i ? (1 == i ? y : z) : x;
-        }
-};
+template <int n> inline vec<n> operator+(vec<n> lhs, const vec<n> &rhs) {
+        lhs += rhs;
+        return lhs;
+}
 
-typedef vec<3> vec3;
-
+typedef vec<2> vec2;
 template <> struct vec<2> {
         double x = 0, y = 0;
         double &operator[](const int i) {
@@ -62,6 +72,44 @@ template <> struct vec<2> {
                 assert(i >= 0 && i < 3);
                 return i ? y : x;
         }
+
+        // I think this is right
+        double cross(const vec<2> &rhs) {
+                return (this->x * rhs.y) - (this->y * rhs.x);
+        }
 };
 
-typedef vec<2> vec2;
+typedef vec<3> vec3;
+template <> struct vec<3> {
+        double x = 0, y = 0, z = 0;
+        double &operator[](const int i) {
+                assert(i >= 0 && i < 3);
+                return i ? (1 == i ? y : z) : x;
+        }
+        double operator[](const int i) const {
+                assert(i >= 0 && i < 3);
+                return i ? (1 == i ? y : z) : x;
+        }
+
+        // Using determinant of 3x3 matrix?
+        double cross(const vec<3> &rhs) {
+                double xcomp = (this->y * rhs.z - this->z * rhs.y);
+                double ycomp = (this->z * rhs.x - this->x * rhs.z);
+                double zcomp = (this->x * rhs.y - this->y * rhs.x);
+
+                return xcomp + ycomp + zcomp;
+        }
+};
+
+typedef vec<4> vec4;
+template <> struct vec<4> {
+        double x = 0, y = 0, z = 0, w = 0;
+        double &operator[](const int i) {
+                assert(i >= 0 && i < 4);
+                return i ? (1 == i ? y : (2 == i ? z : w)) : x;
+        }
+        double operator[](const int i) const {
+                assert(i >= 0 && i < 4);
+                return i ? (1 == i ? y : (2 == i ? z : w)) : x;
+        }
+};
