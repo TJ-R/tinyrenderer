@@ -1,6 +1,6 @@
 #include "tgaimage.h"
-#include "types.h"
 #include "utils/draw_utils.h"
+#include "vector.h"
 #include <strings.h>
 
 class Triangle {

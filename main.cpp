@@ -1,7 +1,7 @@
 #include "model.h"
 #include "tgaimage.h"
 #include "triangle.cpp"
-#include "types.h"
+#include "vector.h"
 #include <iostream>
 #include <strings.h>
 

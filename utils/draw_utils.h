@@ -2,7 +2,7 @@
 
 #include "../tga_colors.h"
 #include "../tgaimage.h"
-#include "../types.h"
+#include "../vector.h"
 #include <cmath>
 
 void drawLinei(TGAImage *frameBuffer, vec3i v1, vec3i v2, const TGAColor &c);
